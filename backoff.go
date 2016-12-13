@@ -23,6 +23,7 @@ example:
 // BackOff algorithm for calculate the period of each retry
 type BackOff interface {
 	Next() time.Duration
+	// call Reset() before use
 	Reset()
 }
 
@@ -68,7 +69,6 @@ func NewExponential() *Exponential {
 		InitInterval: DefaultInitInterval,
 		MaxInterval:  DefaultMaxInterval,
 	}
-	b.Reset()
 	return b
 }
 
