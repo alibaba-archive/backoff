@@ -1,6 +1,7 @@
 package backoff
 
 import (
+	"fmt"
 	"math/rand"
 	"time"
 )
@@ -34,6 +35,7 @@ const (
 	DefaultMultiplier   = 1.5
 	DefaultMaxInterval  = 60 * time.Second
 	DefaultMaxElapsed   = 15 * time.Minute
+	DefaultMaxRetry     = 30
 )
 
 // Exponential with the exponential growth period for each retry
@@ -57,6 +59,7 @@ func NewExponential() *Exponential {
 		InitInterval: DefaultInitInterval,
 		MaxInterval:  DefaultMaxInterval,
 		MaxElapsed:   DefaultMaxElapsed,
+		MaxRetry:     DefaultMaxRetry,
 	}
 	b.Reset()
 	return b
@@ -88,6 +91,11 @@ func (b *Exponential) Next() time.Duration {
 	if b.MaxElapsed != 0 && time.Now().Sub(b.startTime) > b.MaxElapsed {
 		return Stop
 	}
+	fmt.Println(b.currentRetry)
+	if b.MaxRetry != 0 && b.currentRetry >= b.MaxRetry {
+		return Stop
+	}
+	b.currentRetry += 1
 	defer b.incrCurrent()
 	return b.nextInterval()
 }

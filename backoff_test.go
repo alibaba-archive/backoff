@@ -20,7 +20,7 @@ func TestBoundOfFactor(t *testing.T) {
 
 func TestNext(t *testing.T) {
 	b := NewExponential()
-	b.MaxElapsed = 2 * time.Minute
+	b.MaxRetry = 10
 	b.Reset()
 
 	var next time.Duration
