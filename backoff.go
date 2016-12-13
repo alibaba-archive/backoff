@@ -45,8 +45,8 @@ type Exponential struct {
 	// need currentInterval * multiplier after calculate the NextInterval
 	// factor must in [0, 1]
 	factor, multiplier float64
-	// if now - startTime > MaxElapsed then stop
-	// if the growth period reach the MaxInterval/Multiplier then return the MaxInterval
+	// if now - startTime > maxElapsed then stop
+	// if the growth period reach the MaxInterval/multiplier then return the MaxInterval
 	InitInterval, currentInterval, MaxInterval, maxElapsed time.Duration
 	reachMaxInterval                                       bool
 	startTime                                              time.Time
@@ -76,7 +76,7 @@ func NewExponential() *Exponential {
 	return b
 }
 
-// nextInterval = currentInterval * (random between [1 + Factor, 1 - Factor])
+// nextInterval = currentInterval * (random between [1 + factor, 1 - factor])
 func (b *Exponential) nextInterval() time.Duration {
 	rnd := rand.Float64()
 	max := float64(b.currentInterval) * (1 + b.factor)
