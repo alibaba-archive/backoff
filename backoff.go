@@ -6,7 +6,7 @@ import (
 )
 
 /*
-simple backoff implement for golang
+simple backoff algorithm implement with golang
 
 example:
 	backoff.Reset()
