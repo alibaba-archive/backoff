@@ -1,7 +1,6 @@
 package backoff
 
 import (
-	"fmt"
 	"math/rand"
 	"time"
 )
@@ -91,7 +90,6 @@ func (b *Exponential) Next() time.Duration {
 	if b.MaxElapsed != 0 && time.Now().Sub(b.startTime) > b.MaxElapsed {
 		return Stop
 	}
-	fmt.Println(b.currentRetry)
 	if b.MaxRetry != 0 && b.currentRetry >= b.MaxRetry {
 		return Stop
 	}
