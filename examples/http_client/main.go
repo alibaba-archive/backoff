@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 	"time"
 
@@ -14,15 +13,12 @@ func main() {
 	b.MaxInterval = 30 * time.Second
 	b.SetFactor(0)
 	b.Reset()
+
+	var next time.Duration
 	for {
-		next := b.Next()
-		if next == backoff.Stop {
-			break
-		}
-		fmt.Println(time.Now())
 		_, err := http.DefaultClient.Get("http://www.baidu.com")
-		if err != nil {
-			continue
+		if next = b.Next(); next == backoff.Stop {
+			break
 		}
 		// dosomething and break
 		time.Sleep(next)

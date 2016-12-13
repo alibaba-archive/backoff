@@ -46,6 +46,20 @@ type Exponential struct {
 	InitInterval, currentInterval, MaxInterval, MaxElapsed time.Duration
 	reachMaxInterval                                       bool
 	startTime                                              time.Time
+	// the number of retries
+	MaxRetry, currentRetry int
+}
+
+func NewExponential() *Exponential {
+	b := &Exponential{
+		factor:       DefaultFactor,
+		multiplier:   DefaultMultiplier,
+		InitInterval: DefaultInitInterval,
+		MaxInterval:  DefaultMaxInterval,
+		MaxElapsed:   DefaultMaxElapsed,
+	}
+	b.Reset()
+	return b
 }
 
 // nextInterval = currentInterval * (random between [1 + Factor, 1 - Factor])
@@ -108,16 +122,4 @@ func (b *Exponential) SetMultiplier(multiplier float64) {
 
 func (b *Exponential) Multiplier() float64 {
 	return b.multiplier
-}
-
-func NewExponential() *Exponential {
-	b := &Exponential{
-		factor:       DefaultFactor,
-		multiplier:   DefaultMultiplier,
-		InitInterval: DefaultInitInterval,
-		MaxInterval:  DefaultMaxInterval,
-		MaxElapsed:   DefaultMaxElapsed,
-	}
-	b.Reset()
-	return b
 }

@@ -22,9 +22,10 @@ func TestNext(t *testing.T) {
 	b := NewExponential()
 	b.MaxElapsed = 2 * time.Minute
 	b.Reset()
+
+	var next time.Duration
 	for {
-		next := b.Next()
-		if next == Stop {
+		if next = b.Next(); next == Stop {
 			break
 		}
 		fmt.Printf("period:  %s\n", next)
