@@ -10,12 +10,16 @@ simple backoff algorithm implement with golang
 
 example:
 	backoff.Reset()
+
+	var next time.Duration
 	for {
-		next := backoff.Next()
-		if next == backoff.Stop {
+		// do something
+		if err == nil {
 			break
 		}
-		// do something
+		if next = backoff.Next(); next == backoff.Stop {
+			break
+		}
 		time.Sleep(next)
 	}
 */
