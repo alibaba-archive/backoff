@@ -33,8 +33,6 @@ const (
 	DefaultInitInterval = 500 * time.Millisecond
 	DefaultMultiplier   = 1.5
 	DefaultMaxInterval  = 60 * time.Second
-	DefaultMaxElapsed   = 15 * time.Minute
-	DefaultMaxRetry     = 30
 )
 
 // Exponential with the exponential growth period for each retry
@@ -44,11 +42,23 @@ type Exponential struct {
 	factor, multiplier float64
 	// if now - startTime > MaxElapsed then stop
 	// if the growth period reach the MaxInterval/Multiplier then return the MaxInterval
-	InitInterval, currentInterval, MaxInterval, MaxElapsed time.Duration
+	InitInterval, currentInterval, MaxInterval, maxElapsed time.Duration
 	reachMaxInterval                                       bool
 	startTime                                              time.Time
 	// the number of retries
-	MaxRetry, currentRetry int
+	maxRetry, currentRetry int
+}
+
+func NewExponentialWithElapsed(elapsed time.Duration) *Exponential {
+	b := NewExponential()
+	b.maxElapsed = elapsed
+	return b
+}
+
+func NewExponentialWithRetry(retry int) *Exponential {
+	b := NewExponential()
+	b.maxRetry = retry
+	return b
 }
 
 func NewExponential() *Exponential {
@@ -57,8 +67,6 @@ func NewExponential() *Exponential {
 		multiplier:   DefaultMultiplier,
 		InitInterval: DefaultInitInterval,
 		MaxInterval:  DefaultMaxInterval,
-		MaxElapsed:   DefaultMaxElapsed,
-		MaxRetry:     DefaultMaxRetry,
 	}
 	b.Reset()
 	return b
@@ -87,10 +95,10 @@ func (b *Exponential) incrCurrent() {
 }
 
 func (b *Exponential) Next() time.Duration {
-	if b.MaxElapsed != 0 && time.Now().Sub(b.startTime) > b.MaxElapsed {
+	if b.maxElapsed != 0 && time.Now().Sub(b.startTime) > b.maxElapsed {
 		return Stop
 	}
-	if b.MaxRetry != 0 && b.currentRetry >= b.MaxRetry {
+	if b.maxRetry != 0 && b.currentRetry >= b.maxRetry {
 		return Stop
 	}
 	b.currentRetry += 1
@@ -120,7 +128,7 @@ func (b *Exponential) Factor() float64 {
 
 func (b *Exponential) SetMultiplier(multiplier float64) {
 	switch {
-	case multiplier <= 1:
+	case multiplier < 1:
 	default:
 		b.multiplier = multiplier
 	}

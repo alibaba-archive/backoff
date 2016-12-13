@@ -1,7 +1,6 @@
 package backoff
 
 import (
-	"fmt"
 	"testing"
 	"time"
 )
@@ -18,17 +17,43 @@ func TestBoundOfFactor(t *testing.T) {
 	}
 }
 
-func TestNext(t *testing.T) {
-	b := NewExponential()
-	b.MaxRetry = 10
+func TestMaxRetry(t *testing.T) {
+	maxRetry := 10
+	b := NewExponentialWithRetry(maxRetry)
 	b.Reset()
 
-	var next time.Duration
+	var (
+		next  time.Duration
+		retry int
+	)
 	for {
 		if next = b.Next(); next == Stop {
 			break
 		}
-		fmt.Printf("period:  %s\n", next)
-		time.Sleep(time.Second)
+		retry += 1
 	}
+	if retry != 10 {
+		t.Fatal("retry: ", retry)
+	}
+}
+
+func TestMaxElapsed(t *testing.T) {
+	maxElapsed := 10 * time.Second
+	b := NewExponentialWithElapsed(maxElapsed)
+	b.SetMultiplier(1)
+	b.Reset()
+
+	var (
+		next time.Duration
+	)
+	start := time.Now()
+	for {
+		if next = b.Next(); next == Stop {
+			break
+		}
+	}
+	end := time.Now()
+	// with tiny gap
+	t.Logf("maxElapsed: %s\n", maxElapsed)
+	t.Logf("elapsed: %s\n", end.Sub(start))
 }

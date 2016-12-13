@@ -10,9 +10,7 @@ import (
 func main() {
 	b := backoff.NewExponential()
 	b.InitInterval = time.Second
-	b.MaxElapsed = 2 * time.Minute
 	b.MaxInterval = 30 * time.Second
-	b.MaxRetry = 30
 	b.SetMultiplier(1.5)
 	b.SetFactor(0)
 	b.Reset()
