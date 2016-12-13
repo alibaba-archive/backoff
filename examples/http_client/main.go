@@ -17,14 +17,15 @@ func main() {
 
 	var next time.Duration
 	for {
-		_, err := http.DefaultClient.Get("http://www.baidu.com")
+		resp, err := http.DefaultClient.Get("http://www.baidu.com")
 		if err == nil {
+			// dosomething with resp
+			_ = resp
 			break
 		}
 		if next = b.Next(); next == backoff.Stop {
 			break
 		}
-		// dosomething and break
 		time.Sleep(next)
 	}
 }
