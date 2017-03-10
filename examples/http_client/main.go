@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/xusss/backoff"
+	"github.com/teambition/backoff"
 )
 
 func main() {
